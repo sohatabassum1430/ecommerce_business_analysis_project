@@ -1,0 +1,320 @@
+TOTAL REVENUE:
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Total Revenue] =
+        SUMX(
+            'CLEAN_ORDERS',
+            'CLEAN_ORDERS'[total_amount]
+            - 'CLEAN_ORDERS'[discount]
+        )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Total Revenue", [Total Revenue]
+    )
+
+
+
+TOTAL ORDERS:
+
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Total Orders] =
+        COUNTROWS( 'CLEAN_ORDERS' )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Total Orders", [Total Orders]
+    )
+
+AVG ORDER VALUE:
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Total Revenue] =
+        SUMX(
+            'CLEAN_ORDERS',
+            'CLEAN_ORDERS'[total_amount]
+            - 'CLEAN_ORDERS'[discount]
+        )
+    MEASURE 'CLEAN_ORDERS'[Total Orders] =
+        COUNTROWS( 'CLEAN_ORDERS' )
+    MEASURE 'CLEAN_ORDERS'[Avg Order Value] =
+        DIVIDE( [Total Revenue], [Total Orders], 0 )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Avg Order Value", [Avg Order Value]
+    )
+
+
+GROSS PROFIT:
+DEFINE
+    MEASURE 'CLEAN_ORDER_ITEMS'[Gross Profit] =
+        SUMX(
+            'CLEAN_ORDER_ITEMS',
+            RELATED( 'CLEAN_PRODUCTS'[price] )
+            - RELATED( 'CLEAN_PRODUCTS'[cost_price] )
+        )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDER_ITEMS',
+        "Gross Profit", [Gross Profit]
+    )
+
+
+Profit margin:
+
+
+DEFINE
+    MEASURE 'CLEAN_ORDER_ITEMS'[Gross Profit] =
+        SUMX(
+            'CLEAN_ORDER_ITEMS',
+            RELATED( 'CLEAN_PRODUCTS'[price] )
+            - RELATED( 'CLEAN_PRODUCTS'[cost_price] )
+        )
+    MEASURE 'CLEAN_ORDERS'[Total Revenue] =
+        SUMX(
+            'CLEAN_ORDERS',
+            'CLEAN_ORDERS'[total_amount]
+            - 'CLEAN_ORDERS'[discount]
+        )
+    MEASURE 'CLEAN_ORDERS'[Profit Margin %] =
+        DIVIDE( [Gross Profit], [Total Revenue], 0 ) * 100
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Profit Margin %", [Profit Margin %]
+    )
+
+Total discount:
+
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Total Discount] =
+        SUM( 'CLEAN_ORDERS'[discount] )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Total Discount", [Total Discount]
+    )
+
+Totalcustomers:
+
+DEFINE
+    MEASURE 'CLEAN_CUSTOMERS'[Total Customers] =
+        COUNTROWS( 'CLEAN_CUSTOMERS' )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_CUSTOMERS',
+        "Total Customers", [Total Customers]
+    )
+
+
+Active customers:
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Active Customers] =
+        DISTINCTCOUNT( 'CLEAN_ORDERS'[customer_id] )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Active Customers", [Active Customers]
+    )
+
+
+Revenue per customer:
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Total Revenue] =
+        SUMX(
+            'CLEAN_ORDERS',
+            'CLEAN_ORDERS'[total_amount]
+            - 'CLEAN_ORDERS'[discount]
+        )
+    MEASURE 'CLEAN_ORDERS'[Active Customers] =
+        DISTINCTCOUNT( 'CLEAN_ORDERS'[customer_id] )
+    MEASURE 'CLEAN_ORDERS'[Revenue per Customer] =
+        DIVIDE( [Total Revenue], [Active Customers], 0 )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Revenue per Customer", [Revenue per Customer]
+    )
+
+
+TOTAL PRODUCTS SOLD:
+
+DEFINE
+    MEASURE 'CLEAN_ORDER_ITEMS'[Total Products Sold] =
+        SUM( 'CLEAN_ORDER_ITEMS'[quantity] )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDER_ITEMS',
+        "Total Products Sold", [Total Products Sold]
+    )
+
+
+Total Stock Value:
+DEFINE
+    MEASURE 'CLEAN_PRODUCTS'[Total Stock Value] =
+        SUMX(
+            'CLEAN_PRODUCTS',
+            'CLEAN_PRODUCTS'[cost_price]
+            * 'CLEAN_PRODUCTS'[stock_quantity]
+        )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_PRODUCTS',
+        "Total Stock Value", [Total Stock Value]
+    )
+
+
+Revenue YTD:
+
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Total Revenue] =
+        SUMX(
+            'CLEAN_ORDERS',
+            'CLEAN_ORDERS'[total_amount]
+            - 'CLEAN_ORDERS'[discount]
+        )
+    MEASURE 'CLEAN_ORDERS'[Revenue YTD] =
+        TOTALYTD(
+            [Total Revenue],
+            'CLEAN_ORDERS'[order_date]
+        )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Revenue YTD", [Revenue YTD]
+    )
+
+
+MOM Revenue growth:
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Total Revenue] =
+        SUMX(
+            'CLEAN_ORDERS',
+            'CLEAN_ORDERS'[total_amount]
+            - 'CLEAN_ORDERS'[discount]
+        )
+    MEASURE 'CLEAN_ORDERS'[Revenue Prev Month] =
+        CALCULATE(
+            [Total Revenue],
+            PREVIOUSMONTH( 'CLEAN_ORDERS'[order_date] )
+        )
+    MEASURE 'CLEAN_ORDERS'[MoM Revenue Growth %] =
+        DIVIDE(
+            [Total Revenue] - [Revenue Prev Month],
+            [Revenue Prev Month], 0
+        ) * 100
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "MoM Revenue Growth %", [MoM Revenue Growth %]
+    )
+
+
+
+Delivery Rate%:	
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Total Orders] =
+        COUNTROWS( 'CLEAN_ORDERS' )
+    MEASURE 'CLEAN_ORDERS'[Delivered Orders] =
+        CALCULATE(
+            COUNTROWS( 'CLEAN_ORDERS' ),
+            'CLEAN_ORDERS'[status] = "Delivered"
+        )
+    MEASURE 'CLEAN_ORDERS'[Delivery Rate %] =
+        DIVIDE( [Delivered Orders], [Total Orders], 0 ) * 100
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Delivery Rate %", [Delivery Rate %]
+    )
+
+
+Cancellation rate%
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Total Orders] =
+        COUNTROWS( 'CLEAN_ORDERS' )
+    MEASURE 'CLEAN_ORDERS'[Cancelled Orders] =
+        CALCULATE(
+            COUNTROWS( 'CLEAN_ORDERS' ),
+            'CLEAN_ORDERS'[status] = "Cancelled"
+        )
+    MEASURE 'CLEAN_ORDERS'[Cancellation Rate %] =
+        DIVIDE( [Cancelled Orders], [Total Orders], 0 ) * 100
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Cancellation Rate %", [Cancellation Rate %]
+    )
+
+Cash orders% :
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Cash Orders %] =
+        DIVIDE(
+            CALCULATE(
+                COUNTROWS( 'CLEAN_ORDERS' ),
+                'CLEAN_ORDERS'[payment_method] = "Cash"
+            ),
+            COUNTROWS( 'CLEAN_ORDERS' ), 0
+        ) * 100
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Cash Orders %", [Cash Orders %]
+    )
+
+
+-- Shipped Orders
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Shipped Orders] =
+        CALCULATE(
+            COUNTROWS('CLEAN_ORDERS'),
+            'CLEAN_ORDERS'[status] = "Shipped"
+        )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Shipped Orders", [Shipped Orders]
+    )
+
+
+-- Pending Orders
+DEFINE
+    MEASURE 'CLEAN_ORDERS'[Pending Orders] =
+        CALCULATE(
+            COUNTROWS('CLEAN_ORDERS'),
+            'CLEAN_ORDERS'[status] = "Pending"
+        )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDERS',
+        "Pending Orders", [Pending Orders]
+    )
+DEFINE
+    MEASURE 'CLEAN_ORDER_ITEMS'[Total Products Sold] =
+        SUM( 'CLEAN_ORDER_ITEMS'[quantity] )
+
+EVALUATE
+    SUMMARIZE(
+        'CLEAN_ORDER_ITEMS',
+        "Total Products Sold", [Total Products Sold]
+    )
+
+
+
