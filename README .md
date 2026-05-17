@@ -66,7 +66,7 @@ ecommerce-analysis/
 ## 👤 Author
 
 **Soha Tabassum**
-[GitHub](https://github.com/sohatabassum1430) • [LinkedIn](#)
+[GitHub](https://github.com/sohatabassum1430) • [LinkedIn] https://www.linkedin.com/in/soha-tabassum-634393209/ 
 
 ---
 
